@@ -1,0 +1,35 @@
+{
+ "$schema":"https://json-schema.org/draft/2020-12/schema",
+ "title":"windows-network-binding-auditor 1.0.0",
+ "type":"object","additionalProperties":false,
+ "required":["schema_version","application_version","interfaces_complete","netcfg_complete","errors","adapters"],
+ "properties":{
+  "schema_version":{"const":"1.0.0"},"application_version":{"const":"1.0.0"},
+  "interfaces_complete":{"type":"boolean"},"netcfg_complete":{"type":"boolean"},
+  "errors":{"$ref":"#/$defs/strings"},
+  "adapters":{"type":"array","items":{"$ref":"#/$defs/adapter"}}
+ },
+ "$defs":{
+  "strings":{"type":"array","items":{"type":"string"}},
+  "state":{"enum":["enabled","disabled","mixed","absent","unavailable","unknown"]},
+  "component":{"type":"object","additionalProperties":false,"required":["id","name"],"properties":{"id":{"type":"string"},"name":{"type":"string"}}},
+  "path":{"type":"object","additionalProperties":false,"required":["state","components"],
+   "properties":{"state":{"enum":["enabled","disabled","unknown"]},"components":{"type":"array","items":{"$ref":"#/$defs/component"}}}},
+  "known":{"type":"object","additionalProperties":false,"required":["ms_tcpip","ms_tcpip6","ms_msclient","ms_server","ms_pacer","vms_pp"],
+   "properties":{"ms_tcpip":{"$ref":"#/$defs/state"},"ms_tcpip6":{"$ref":"#/$defs/state"},"ms_msclient":{"$ref":"#/$defs/state"},
+    "ms_server":{"$ref":"#/$defs/state"},"ms_pacer":{"$ref":"#/$defs/state"},"vms_pp":{"$ref":"#/$defs/state"}}},
+  "adapter":{"type":"object","additionalProperties":false,
+   "required":["guid","index","name","description","classification","operational_state","bindings_complete","known_components","paths","errors","findings"],
+   "properties":{
+    "guid":{"type":"string","pattern":"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"},
+    "index":{"type":["integer","null"],"minimum":1,"maximum":4294967295},
+    "name":{"type":"string"},"description":{"type":"string"},
+    "classification":{"enum":["hardware","non_hardware","loopback","tunnel","unknown"]},
+    "operational_state":{"enum":["up","down","testing","unknown","dormant","not_present","lower_layer_down"]},
+    "bindings_complete":{"type":"boolean"},"known_components":{"$ref":"#/$defs/known"},
+    "paths":{"type":"array","items":{"$ref":"#/$defs/path"}},
+    "errors":{"$ref":"#/$defs/strings"},"findings":{"$ref":"#/$defs/strings"}
+   }
+  }
+ }
+}
